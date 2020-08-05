@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Matcher</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="pin-generator half-width">
+                    <input id="generatedPinView" class="form-control" type="text">
+                    <button id="generatePinButton" class="generate-btn">Generate Pin</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-section half-width">
+                    <input id="enteredPinView" class="form-control" type="text">
+                    <div class="numbers">
+                        <div class="calc-body">
+                            <div class="calc-button-row">
+                              <div id="seven" class="button">7</div>
+                              <div id="eight" class="button">8</div>
+                              <div id="nine" class="button">9</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div id="four" class="button">4</div>
+                              <div  id="five"class="button">5</div>
+                              <div id="six" class="button">6</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div id="one" class="button">1</div>
+                              <div  id="two" class="button">2</div>
+                              <div id="three" class="button">3</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div id="deleteLastNumber" class="button"><</div>
+                              <div id="zero" class="button">0</div>
+                              <div id="clearAll" class="button">C</div>
+                            </div>
+                            <div>
+                              <button id="submitButton" type="submit" class="submit-btn">Submit</button>
+                              <p class="action-left"> <span id="tryLeft">3</span> try left</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notify-section">
+            <p id="pinDontMatched" class="notify"> <span class="cross"> &#10008;</span>  Pin Didn't Match, Please try again</p>
+            <p id="pinMatched" class="notify"><span class="check"> &#10004;</span> Pin Matched... Secret door is opening for you</p>
+        </div>
+    </div>
+
+
+
+    <script>
+
+        function number(numberValue){
+            document.getElementById(numberValue).addEventListener('click',function(){
+            var number = document.getElementById(numberValue).innerText;
+            document.getElementById('enteredPinView').value = document.getElementById('enteredPinView').value + number;
+        })
+        }
+
+        function generatePin(){
+            document.getElementById('generatePinButton').addEventListener('click',function(){
+
+                var roundRandomNumber = Math.ceil(Math.random()*10000);
+                if (roundRandomNumber<1000){ // sometimes random function generate 3 digit number. This section turn 3 digit in to 4 digit number.
+                    roundRandomNumber = roundRandomNumber +1000;
+                }
+                msgShowHide("pinMatched", "none");
+                msgShowHide("pinDontMatched", "none");
+                document.getElementById('enteredPinView').value = ""; //clear all input number
+
+                document.getElementById('submitButton').disabled = false;
+                document.getElementById('tryLeft').innerText = 3;
+
+                document.getElementById('generatedPinView').value = roundRandomNumber;
+            })
+        }
+
+        function pinMatching(){
+            document.getElementById('submitButton').addEventListener('click',function(){
+            var generatedPin = document.getElementById('generatedPinView').value;
+             var enteredPin = document.getElementById('enteredPinView').value;
+            
+             if(enteredPin == generatedPin && generatedPin != ""){
+                 msgShowHide("pinMatched", "block");
+                 msgShowHide("pinDontMatched", "none");
+                
+                return 0;
+             }
+             
+                 msgShowHide("pinMatched", "none");
+                 msgShowHide("pinDontMatched", "block");
+                 document.getElementById('tryLeft').innerText = document.getElementById('tryLeft').innerText-1;
+                 var x = document.getElementById('tryLeft').innerText;
+                 
+                 if (x==0){
+                    document.getElementById('submitButton').disabled = true;
+                 }
+            })
+
+        }
+
+        function clear(){
+            document.getElementById('clearAll').addEventListener('click',function(){
+            document.getElementById('enteredPinView').value = "";
+
+            msgShowHide("pinMatched", "none");
+            msgShowHide("pinDontMatched", "none");
+            })
+        }
+
+        function deleteLastNumber(){
+            document.getElementById('deleteLastNumber').addEventListener('click',function(){
+            var deleteLastNumber = document.getElementById('enteredPinView').value;
+            
+            var newNum = (deleteLastNumber).toString().slice(0, -1);
+            document.getElementById('enteredPinView').value = newNum;
+
+            msgShowHide("pinMatched", "none");
+            msgShowHide("pinDontMatched", "none");
+            })
+        }
+
+        function msgShowHide(message , status){
+            document.getElementById(message).style.display = status;
+        }
+
+
+
+
+
+        if(document.getElementById('generatedPinView').value == 0){
+                document.getElementById('submitButton').disabled = true;
+             }
+       
+        pinMatching();
+        generatePin();
+        number('zero');
+        number('one');
+        number('two');
+        number('three');
+        number('four');
+        number('five');
+        number('six');
+        number('seven');
+        number('eight');
+        number('nine');
+        deleteLastNumber();
+        clear();
+  
+
+    </script>
+
+
+</body>
+</html>
